@@ -1,0 +1,665 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+.env
+.env.*
+!.env.example
+*.env
+.envrc
+
+# API Keys and Credentials
+api_keys/
+credentials/
+secrets/
+config/secrets.json
+config/credentials.json
+**/*_key.json
+**/*_secret.json
+**/*credentials*
+**/*secrets*
+
+# Security certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.keystore
+*.jks
+ssl/
+certs/
+
+# Firebase config (contains sensitive data)
+google-services.json
+GoogleService-Info.plist
+firebase-config.js
+firebase-adminsdk-*.json
+
+# OAuth and Auth tokens
+oauth_tokens/
+refresh_tokens/
+access_tokens/
+*.token
+
+# Database credentials and connection strings
+database.url
+connection_strings/
+db_credentials/
+
+# =====================================
+# PYTHON BACKEND
+# =====================================
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+backend_env/
+python_env/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# FastAPI
+*.db
+instance/
+.webassets-cache
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# Spyder
+.spyderproject
+.spyproject
+
+# Rope
+.ropeproject
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# ML Models (large files)
+*.h5
+*.hdf5
+*.pkl
+*.model
+*.joblib
+models/trained/
+checkpoints/
+*.weights
+
+# =====================================
+# FLUTTER MOBILE
+# =====================================
+# Flutter/Dart/Pub
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+flutter_*.png
+flutter_*.log
+**/android/key.properties
+**/android/app/upload-keystore.jks
+**/android/app/my-upload-key.keystore
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+
+# iOS
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Podfile.lock
+**/ios/.symlinks/
+
+# macOS
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/ephemeral/
+
+# Windows
+**/windows/flutter/generated_plugin_registrant.cc
+**/windows/flutter/generated_plugin_registrant.h
+**/windows/flutter/generated_plugins.cmake
+
+# Linux
+**/linux/flutter/generated_plugin_registrant.cc
+**/linux/flutter/generated_plugin_registrant.h
+**/linux/flutter/generated_plugins.cmake
+
+# Coverage
+coverage/
+lcov.info
+
+# Analyzer
+.dart_tool/package_config.json
+
+# =====================================
+# REACT WEB FRONTEND
+# =====================================
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+dist-ssr/
+*.local
+.cache/
+
+# Vite
+.vite/
+.vite-cache/
+
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# React specific
+.eslintcache
+build/
+public/build/
+
+# Next.js (if used)
+.next/
+out/
+
+# Gatsby (if used)
+.cache/
+public/
+
+# Storybook
+.out/
+.storybook-out/
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm/
+
+# Optional eslint cache
+.eslintcache/
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test/
+
+# =====================================
+# DATABASE & STORAGE
+# =====================================
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+*.mdb
+*.accdb
+
+# Database backups
+*.backup
+*.bak
+*.dump
+*.sql
+
+# Redis
+*.rdb
+*.aof
+
+# PostgreSQL
+postgresql.conf
+pg_hba.conf
+pg_ident.conf
+
+# MongoDB
+*.mongodb
+
+# =====================================
+# CONTAINERIZATION & DEPLOYMENT
+# =====================================
+# Docker
+.dockerignore
+docker-compose.override.yml
+docker-compose.override.yaml
+docker-compose.prod.yml
+docker-compose.prod.yaml
+.docker/
+
+# Kubernetes
+*.kubeconfig
+k8s-secrets/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.tfvars
+
+# AWS
+.aws/
+aws-credentials.json
+
+# GCP
+gcloud-credentials.json
+service-account-key.json
+
+# Azure
+azure-credentials.json
+
+# =====================================
+# DEVELOPMENT TOOLS
+# =====================================
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+.loadpath
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~.nib
+local.properties
+
+# =====================================
+# LOGS & MONITORING
+# =====================================
+# Application logs
+logs/
+*.log
+log/
+app.log
+error.log
+access.log
+debug.log
+combined.log
+
+# PM2 logs
+.pm2/
+
+# System logs
+/var/log/
+
+# Crash reports
+crash.log
+*.crash
+
+# Performance profiling
+*.prof
+*.heap
+*.trace
+
+# =====================================
+# TESTING & COVERAGE
+# =====================================
+# Test results
+test-results/
+coverage/
+.nyc_output/
+junit.xml
+test-report.html
+allure-results/
+allure-report/
+
+# Jest
+coverage/
+.jest/
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+
+# =====================================
+# MACHINE LEARNING & AI
+# =====================================
+# Model files
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.joblib
+*.model
+*.weights
+*.pb
+*.pth
+*.pt
+*.onnx
+
+# Training data
+data/raw/
+data/processed/
+datasets/
+training_data/
+test_data/
+
+# ML experiments
+experiments/
+mlruns/
+.mlflow/
+wandb/
+tensorboard_logs/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+*.ipynb
+
+# =====================================
+# AUDIO & MEDIA FILES
+# =====================================
+# Audio files (for TTS/STT)
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.ogg
+*.flac
+audio_cache/
+voice_samples/
+tts_cache/
+
+# Image files (temporary/cache)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.webp
+image_cache/
+generated_images/
+temp_images/
+
+# Video files
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+video_cache/
+
+# =====================================
+# MOBILE SPECIFIC
+# =====================================
+# Android keystore
+*.keystore
+*.jks
+key.properties
+
+# iOS certificates
+*.p12
+*.mobileprovision
+ios_distribution.cer
+ios_development.cer
+
+# React Native
+react-native-config/
+
+# Expo
+.expo/
+.expo-shared/
+
+# =====================================
+# BACKUP & VERSIONING
+# =====================================
+# Backup files
+*.backup
+*.bak
+*.old
+*.orig
+*.save
+*~
+
+# Version control
+.hg/
+.bzr/
+.svn/
+
+# Git specific
+.git/
+.gitconfig
+
+# =====================================
+# DOCUMENTATION & REPORTS
+# =====================================
+# Generated documentation
+docs/build/
+docs/_build/
+site/
+.sphinx/
+
+# Reports
+reports/
+*.report
+audit_reports/
+security_reports/
+
+# =====================================
+# COMPLIANCE & AUDIT
+# =====================================
+# HIPAA audit logs (keep encrypted)
+hipaa_logs/
+audit_trail/
+compliance_reports/
+
+# GDPR data exports
+gdpr_exports/
+data_exports/
+
+# Security scan results
+security_scans/
+vulnerability_reports/
+
+# =====================================
+# PERFORMANCE & MONITORING
+# =====================================
+# Performance profiles
+*.cpuprofile
+*.heapprofile
+*.profile
+
+# Monitoring data
+metrics/
+monitoring/
+performance_logs/
+
+# =====================================
+# CUSTOM PROJECT SPECIFIC
+# =====================================
+# EEG data files
+eeg_data/
+brainwave_data/
+*.edf
+*.bdf
+*.vhdr
+
+# Generated neurographic art
+generated_art/
+art_cache/
+neural_art/
+
+# Voice authentication models
+voice_models/
+speaker_verification/
+voice_prints/
+
+# Professional document templates
+templates/generated/
+document_cache/
+
+# Crisis intervention logs (encrypted)
+crisis_logs/
+emergency_logs/
+
+# Shadow work analysis cache
+shadow_analysis/
+psychological_patterns/
+
+# Gamification assets
+achievement_cache/
+badge_images/
+
+# Location data cache
+location_cache/
+gps_history/
+
+# =====================================
+# END OF FILE
+# =====================================

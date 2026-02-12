@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- App Identity & Metadata -->
+	<key>CFBundleDisplayName</key>
+	<string>ONXLink</string>
+	<key>CFBundleName</key>
+	<string>ONXLink</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.onxlink.app</string>
+	<key>CFBundleVersion</key>
+	<string>1.0.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleExecutable</key>
+	<string>Runner</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	
+	<!-- App Store & Marketing -->
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.business</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>es</string>
+		<string>fr</string>
+		<string>de</string>
+		<string>zh</string>
+		<string>ja</string>
+		<string>ko</string>
+		<string>ar</string>
+		<string>ru</string>
+		<string>pt</string>
+		<string>it</string>
+		<string>nl</string>
+		<string>tr</string>
+		<string>hi</string>
+		<string>bn</string>
+	</array>
+	
+	<!-- Device & Platform Support -->
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	
+	<!-- UI & Visual Configuration -->
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+	<key>UIUserInterfaceStyle</key>
+	<string>Automatic</string>
+	
+	<!-- App Icon Configuration -->
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon20x20</string>
+				<string>AppIcon29x29</string>
+				<string>AppIcon40x40</string>
+				<string>AppIcon60x60</string>
+			</array>
+			<key>CFBundleIconName</key>
+			<string>AppIcon</string>
+		</dict>
+	</dict>
+	
+	<!-- Privacy & Permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>ONXLink needs camera access to capture product photos for your social media posts and AI influencer content creation.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>ONXLink accesses your photo library to select images for social media posts and AI-generated content.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>ONXLink saves generated content and AI influencer images to your photo library for easy sharing.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>ONXLink uses microphone for voice-controlled bulk operations and AI influencer voice cloning features.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>ONXLink uses location to provide culturally relevant content suggestions and localized pricing for your region.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>ONXLink accesses contacts to help you connect with collaborators and share AI-generated content with your network.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>ONXLink uses Face ID for secure authentication and to protect your AI influencer profiles and business data.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>ONXLink uses tracking data to optimize AI content recommendations and provide personalized social media analytics.</string>
+	
+	<!-- Network & Security -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<false/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>api.onxlink.com</key>
+			<dict>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<false/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.2</string>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>cdn.onxlink.com</key>
+			<dict>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<false/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.2</string>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	
+	<!-- Background Modes for Offline Features -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-processing</string>
+		<string>background-fetch</string>
+		<string>background-app-refresh</string>
+	</array>
+	
+	<!-- Background Tasks -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.onxlink.app.refresh</string>
+		<string>com.onxlink.app.sync</string>
+		<string>com.onxlink.app.ai-process</string>
+		<string>com.onxlink.app.content-backup</string>
+	</array>
+	
+	<!-- URL Schemes & Deep Links -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.onxlink.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>onxlink</string>
+				<string>com.onxlink.app</string>
+			</array>
+			<key>CFBundleURLIconFile</key>
+			<string>AppIcon</string>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Social Auth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>onxlink-auth</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Payment Handler</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>onxlink-payment</string>
+			</array>
+		</dict>
+	</array>
+	
+	<!-- Document Types & File Handling -->
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>ONXLink AI Profile</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.onxlink.ai-profile</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Social Media Template</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.onxlink.template</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Content Package</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.onxlink.content-package</string>
+			</array>
+		</dict>
+	</array>
+	
+	<!-- UTI Declarations for Custom File Types -->
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.onxlink.ai-profile</string>
+			<key>UTTypeDescription</key>
+			<string>ONXLink AI Influencer Profile</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>onxai</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/x-onxlink-ai-profile</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.onxlink.template</string>
+			<key>UTTypeDescription</key>
+			<string>ONXLink Content Template</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>onxtemplate</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/x-onxlink-template</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+	
+	<!-- App Clips & Extensions -->
+	<key>NSAppClip</key>
+	<dict>
+		<key>NSAppClipRequestEphemeralUserNotification</key>
+		<false/>
+		<key>NSAppClipRequestLocationConfirmation</key>
+		<false/>
+	</dict>
+	
+	<!-- Siri & Shortcuts -->
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.onxlink.generate-content</string>
+		<string>com.onxlink.post-social</string>
+		<string>com.onxlink.create-influencer</string>
+		<string>com.onxlink.analyze-trends</string>
+	</array>
+	
+	<!-- App Extensions -->
+	<key>NSExtension</key>
+	<dict>
+		<key>NSExtensionPointIdentifier</key>
+		<string>com.apple.share-services</string>
+		<key>NSExtensionAttributes</key>
+		<dict>
+			<key>NSExtensionActivationRule</key>
+			<dict>
+				<key>NSExtensionActivationSupportsImageWithMaxCount</key>
+				<integer>10</integer>
+				<key>NSExtensionActivationSupportsMovieWithMaxCount</key>
+				<integer>5</integer>
+				<key>NSExtensionActivationSupportsText</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	
+	<!-- Voice Control & Accessibility -->
+	<key>UISpeechRecognitionUsageDescription</key>
+	<string>ONXLink uses speech recognition for voice-controlled bulk operations and hands-free content creation.</string>
+	<key>UIAccessibilityTraits</key>
+	<integer>0</integer>
+	<key>UIRequiresFullScreen</key>
+	<false/>
+	
+	<!-- Notifications & Communications -->
+	<key>UIUserNotificationSettings</key>
+	<dict>
+		<key>UIUserNotificationTypeAlert</key>
+		<true/>
+		<key>UIUserNotificationTypeBadge</key>
+		<true/>
+		<key>UIUserNotificationTypeSound</key>
+		<true/>
+	</dict>
+	
+	<!-- Push Notifications -->
+	<key>aps-environment</key>
+	<string>production</string>
+	
+	<!-- Firebase & Analytics -->
+	<key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>
+	<true/>
+	<key>GOOGLE_ANALYTICS_IDFV_COLLECTION_ENABLED</key>
+	<true/>
+	<key>GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE</key>
+	<true/>
+	<key>GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE</key>
+	<false/>
+	
+	<!-- Security & Privacy Settings -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>instagram</string>
+		<string>instagram-stories</string>
+		<string>tiktok</string>
+		<string>twitter</string>
+		<string>fb</string>
+		<string>fbapi</string>
+		<string>fb-messenger</string>
+		<string>whatsapp</string>
+		<string>telegram</string>
+		<string>snapchat</string>
+		<string>youtube</string>
+		<string>linkedin</string>
+		<string>pinterest</string>
+		<string>reddit</string>
+		<string>discord</string>
+		<string>clubhouse</string>
+		<string>wechat</string>
+		<string>weibo</string>
+		<string>line</string>
+		<string>kakao</string>
+		<string>viber</string>
+	</array>
+	
+	<!-- Data Protection & Encryption -->
+	<key>NSDataProtectionLevel</key>
+	<string>NSFileProtectionCompleteUntilFirstUserAuthentication</string>
+	
+	<!-- App Tracking Transparency -->
+	<key>NSUserTrackingUsageDescription</key>
+	<string>ONXLink uses tracking to personalize your AI content recommendations and optimize social media performance analytics.</string>
+	
+	<!-- Handoff & Continuity -->
+	<key>NSHandoffTypes</key>
+	<array>
+		<string>com.onxlink.content-creation</string>
+		<string>com.onxlink.social-management</string>
+		<string>com.onxlink.ai-influencer</string>
+	</array>
+	
+	<!-- CarPlay Support -->
+	<key>MKDirectionsApplicationSupportedModes</key>
+	<array>
+		<string>MKDirectionsModeCar</string>
+	</array>
+	
+	<!-- Watch App Companion -->
+	<key>WKCompanionAppBundleIdentifier</key>
+	<string>com.onxlink.app</string>
+	<key>WKWatchOnly</key>
+	<false/>
+	
+	<!-- Quick Actions -->
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.onxlink.quick-post</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Quick Post</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>Create and post content instantly</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeAdd</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.onxlink.ai-generate</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>AI Generate</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>Generate AI content</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeCompose</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.onxlink.analytics</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Analytics</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>View performance insights</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeSearch</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.onxlink.voice-command</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Voice Control</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>Use voice commands</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeAudio</string>
+		</dict>
+	</array>
+	
+	<!-- Offline Support & Core Data -->
+	<key>NSCoreDataCloudKitContainerOptions</key>
+	<dict>
+		<key>NSPersistentCloudKitContainerApplicationInstanceIdentifierToken</key>
+		<string>iCloud.com.onxlink.app</string>
+	</dict>
+	
+	<!-- Widget & Extensions -->
+	<key>NSExtensionPointIdentifier</key>
+	<string>com.apple.widgetkit-extension</string>
+	
+	<!-- Screen Time & Parental Controls -->
+	<key>STDeviceActivityMonitorExtensionBundleIdentifier</key>
+	<string>com.onxlink.app.screen-time</string>
+	
+	<!-- HomeKit Support -->
+	<key>NSHomeKitUsageDescription</key>
+	<string>ONXLink can integrate with smart home devices for automated content scheduling and voice-controlled operations.</string>
+	
+	<!-- HealthKit Integration -->
+	<key>NSHealthShareUsageDescription</key>
+	<string>ONXLink can access wellness data to provide personalized content recommendations and optimal posting times based on your activity patterns.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>ONXLink can log your content creation activities and social media engagement as part of your digital wellness tracking.</string>
+	
+	<!-- Spotlight Search -->
+	<key>CSSearchableItemActivityIdentifier</key>
+	<string>com.onxlink.spotlight</string>
+	
+	<!-- Third-Party SDKs -->
+	<key>FacebookAppID</key>
+	<string>$(FACEBOOK_APP_ID)</string>
+	<key>FacebookClientToken</key>
+	<string>$(FACEBOOK_CLIENT_TOKEN)</string>
+	<key>FacebookDisplayName</key>
+	<string>ONXLink</string>
+	
+	<!-- Google Services -->
+	<key>REVERSED_CLIENT_ID</key>
+	<string>$(REVERSED_CLIENT_ID)</string>
+	
+	<!-- RevenueCat -->
+	<key>RCPublicAPIKey</key>
+	<string>$(REVENUECAT_PUBLIC_KEY)</string>
+	
+	<!-- Performance & Memory -->
+	<key>UIPrerenderedIcon</key>
+	<false/>
+	<key>UIViewEdgeAntialiasing</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	
+	<!-- Development & Debugging -->
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchScreenBackground</string>
+		<key>UIImageName</key>
+		<string>LaunchIcon</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+		<key>UINavigationBar</key>
+		<dict>
+			<key>UIImageName</key>
+			<string>NavigationBackground</string>
+		</dict>
+		<key>UITabBar</key>
+		<dict>
+			<key>UIImageName</key>
+			<string>TabBarBackground</string>
+		</dict>
+	</dict>
+	
+	<!-- Scene Configuration -->
+	<key>UISceneConfigurations</key>
+	<dict>
+		<key>UIWindowSceneSessionRoleApplication</key>
+		<array>
+			<dict>
+				<key>UISceneConfigurationName</key>
+				<string>Default Configuration</string>
+				<key>UISceneDelegateClassName</key>
+				<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+				<key>UISceneStoryboardFile</key>
+				<string>Main</string>
+			</dict>
+		</array>
+		<key>UIWindowSceneSessionRoleVolumeControl</key>
+		<array>
+			<dict>
+				<key>UISceneConfigurationName</key>
+				<string>Volume Control</string>
+				<key>UISceneDelegateClassName</key>
+				<string>$(PRODUCT_MODULE_NAME).VolumeSceneDelegate</string>
+			</dict>
+		</array>
+	</dict>
+	
+	<!-- Metal Performance Shaders -->
+	<key>UIRequiresPerformanceShaders</key>
+	<false/>
+	
+	<!-- Accessibility Features -->
+	<key>UIAccessibilityContainer</key>
+	<true/>
+	<key>UIAccessibilityElement</key>
+	<true/>
+	
+	<!-- Battery & Performance Optimization -->
+	<key>UIApplicationSupportsLowPowerMode</key>
+	<true/>
+	<key>UIBackgroundTaskIdentifier</key>
+	<string>com.onxlink.background-sync</string>
+	
+	<!-- User Defaults -->
+	<key>NSUserDefaults</key>
+	<dict>
+		<key>OfflineModeEnabled</key>
+		<true/>
+		<key>AutoSaveEnabled</key>
+		<true/>
+		<key>CloudSyncEnabled</key>
+		<true/>
+		<key>BiometricAuthRequired</key>
+		<true/>
+		<key>VoiceCommandsEnabled</key>
+		<true/>
+		<key>SmartNotificationsEnabled</key>
+		<true/>
+	</dict>
+	
+	<!-- Export Compliance -->
+	<key>ITSEncryptionExportComplianceCode</key>
+	<string>$(ENCRYPTION_EXPORT_COMPLIANCE_CODE)</string>
+	
+	<!-- App Store Connect -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>ONXLink can add background music to your AI-generated content and social media posts.</string>
+	
+	<!-- Custom Info -->
+	<key>ONXLinkVersion</key>
+	<string>1.0.0</string>
+	<key>ONXLinkBuildDate</key>
+	<string>$(BUILD_DATE)</string>
+	<key>ONXLinkEnvironment</key>
+	<string>$(APP_ENVIRONMENT)</string>
+	
+	<!-- Regional Settings -->
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
+	
+	<!-- App Icon Badge -->
+	<key>UIApplicationSupportsShakeToEdit</key>
+	<true/>
+	<key>UIApplicationExitsOnSuspend</key>
+	<false/>
+</dict>
+</plist>

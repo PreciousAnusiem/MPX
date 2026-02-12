@@ -1,0 +1,930 @@
+# ONXLink Flutter App - Complete Implementation
+
+## 1. Environment Configuration (lib/utils/environment.dart)
+```dart
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:io';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
+
+class Environment {
+  static String get appName => _decrypt(dotenv.env['APP_NAME_ENC']) ?? 'ONXLink';
+  static String get apiBaseUrl => _decrypt(dotenv.env['API_BASE_URL_ENC']) ?? '';
+  static String get firebaseApiKey => _decrypt(dotenv.env['FIREBASE_API_KEY_ENC']) ?? '';
+  static String get paddleVendorId => _decrypt(dotenv.env['PADDLE_VENDOR_ID_ENC']) ?? '';
+  static String get encryptionKey => dotenv.env['ENCRYPTION_KEY'] ?? '';
+  static bool get isDebug => dotenv.env['DEBUG'] == 'true';
+  static bool get isProduction => dotenv.env['ENVIRONMENT'] == 'production';
+  
+  static final Map<String, String> _apiEndpoints = {
+    'auth': '/auth',
+    'subscription': '/subscription',
+    'content': '/ai/content',
+    'social': '/social',
+    'analytics': '/analytics',
+    'influencer': '/ai/influencer',
+    'cultural': '/ai/cultural',
+  };
+  
+  static String getEndpoint(String key) => _apiEndpoints[key] ?? '';
+  
+  static Future<void> init({String fileName = '.env'}) async {
+    try {
+      await dotenv.load(fileName: fileName);
+      _validateConfiguration();
+    } catch (e) {
+      throw EnvironmentException('Failed to load environment: $e');
+    }
+  }
+  
+  static void _validateConfiguration() {
+    final required = ['API_BASE_URL_ENC', 'FIREBASE_API_KEY_ENC', 'ENCRYPTION_KEY'];
+    for (String key in required) {
+      if (!dotenv.env.containsKey(key) || dotenv.env[key]!.isEmpty) {
+        throw EnvironmentException('Missing required environment variable: $key');
+      }
+    }
+  }
+  
+  static String? _decrypt(String? encryptedData) {
+    if (encryptedData == null || encryptedData.isEmpty) return null;
+    try {
+      final key = utf8.encode(encryptionKey.padRight(32).substring(0, 32));
+      // Simple XOR decryption - replace with AES in production
+      final encrypted = base64Decode(encryptedData);
+      final decrypted = <int>[];
+      for (int i = 0; i < encrypted.length; i++) {
+        decrypted.add(encrypted[i] ^ key[i % key.length]);
+      }
+      return utf8.decode(decrypted);
+    } catch (e) {
+      return null;
+    }
+  }
+}
+
+class EnvironmentException implements Exception {
+  final String message;
+  EnvironmentException(this.message);
+  @override
+  String toString() => 'EnvironmentException: $message';
+}
+```
+
+## 2. Security Manager (lib/utils/security_manager.dart)
+```dart
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:crypto/crypto.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+
+class SecurityManager {
+  static const _storage = FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+      keyCipherAlgorithm: KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
+      storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
+    ),
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
+  );
+  
+  static final LocalAuthentication _localAuth = LocalAuthentication();
+  static String? _deviceId;
+  
+  // Initialize security features
+  static Future<void> initialize() async {
+    await _generateDeviceId();
+    await _checkBiometricAvailability();
+  }
+  
+  // Generate unique device identifier
+  static Future<void> _generateDeviceId() async {
+    final deviceInfo = DeviceInfoPlugin();
+    String identifier = '';
+    
+    try {
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        identifier = androidInfo.id + androidInfo.model + androidInfo.device;
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        identifier = iosInfo.identifierForVendor ?? '';
+      }
+      
+      _deviceId = sha256.convert(utf8.encode(identifier)).toString();
+    } catch (e) {
+      _deviceId = DateTime.now().millisecondsSinceEpoch.toString();
+    }
+  }
+  
+  // Secure data storage
+  static Future<void> storeSecure(String key, String value) async {
+    try {
+      final encrypted = _encrypt(value);
+      await _storage.write(key: key, value: encrypted);
+    } catch (e) {
+      throw SecurityException('Failed to store secure data: $e');
+    }
+  }
+  
+  static Future<String?> getSecure(String key) async {
+    try {
+      final encrypted = await _storage.read(key: key);
+      return encrypted != null ? _decrypt(encrypted) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  
+  static Future<void> deleteSecure(String key) async {
+    await _storage.delete(key: key);
+  }
+  
+  static Future<void> clearAll() async {
+    await _storage.deleteAll();
+  }
+  
+  // Biometric authentication
+  static Future<bool> _checkBiometricAvailability() async {
+    try {
+      return await _localAuth.canCheckBiometrics && 
+             await _localAuth.isDeviceSupported();
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  static Future<bool> authenticateWithBiometrics() async {
+    try {
+      if (!await _checkBiometricAvailability()) return false;
+      
+      return await _localAuth.authenticate(
+        localizedReason: 'Authenticate to access your account',
+        options: const AuthenticationOptions(
+          biometricOnly: true,
+          stickyAuth: true,
+        ),
+      );
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  // Encryption/Decryption
+  static String _encrypt(String data) {
+    final key = _getEncryptionKey();
+    final bytes = utf8.encode(data);
+    final encrypted = <int>[];
+    
+    for (int i = 0; i < bytes.length; i++) {
+      encrypted.add(bytes[i] ^ key[i % key.length]);
+    }
+    
+    return base64Encode(encrypted);
+  }
+  
+  static String _decrypt(String encryptedData) {
+    final key = _getEncryptionKey();
+    final encrypted = base64Decode(encryptedData);
+    final decrypted = <int>[];
+    
+    for (int i = 0; i < encrypted.length; i++) {
+      decrypted.add(encrypted[i] ^ key[i % key.length]);
+    }
+    
+    return utf8.decode(decrypted);
+  }
+  
+  static List<int> _getEncryptionKey() {
+    final baseKey = Environment.encryptionKey + (_deviceId ?? '');
+    return sha256.convert(utf8.encode(baseKey)).bytes;
+  }
+  
+  // Session management
+  static Future<void> storeAuthToken(String token) async {
+    await storeSecure('auth_token', token);
+    await storeSecure('token_timestamp', DateTime.now().toIso8601String());
+  }
+  
+  static Future<String?> getAuthToken() async {
+    final token = await getSecure('auth_token');
+    final timestamp = await getSecure('token_timestamp');
+    
+    if (token == null || timestamp == null) return null;
+    
+    final tokenTime = DateTime.parse(timestamp);
+    final now = DateTime.now();
+    
+    // Token expires after 24 hours
+    if (now.difference(tokenTime).inHours > 24) {
+      await deleteSecure('auth_token');
+      await deleteSecure('token_timestamp');
+      return null;
+    }
+    
+    return token;
+  }
+  
+  static Future<bool> isTokenValid() async {
+    return await getAuthToken() != null;
+  }
+}
+
+class SecurityException implements Exception {
+  final String message;
+  SecurityException(this.message);
+  @override
+  String toString() => 'SecurityException: $message';
+}
+```
+
+## 3. Offline Storage Manager (lib/utils/offline_storage.dart)
+```dart
+import 'dart:convert';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+import '../models/user_model.dart';
+import '../models/content_model.dart';
+import '../models/subscription_model.dart';
+
+class OfflineStorage {
+  static Database? _database;
+  static const String _databaseName = 'onxlink_offline.db';
+  static const int _databaseVersion = 1;
+  
+  // Initialize database
+  static Future<Database> get database async {
+    _database ??= await _initDatabase();
+    return _database!;
+  }
+  
+  static Future<Database> _initDatabase() async {
+    String path = join(await getDatabasesPath(), _databaseName);
+    return await openDatabase(
+      path,
+      version: _databaseVersion,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
+  }
+  
+  static Future<void> _onCreate(Database db, int version) async {
+    // Users table
+    await db.execute('''
+      CREATE TABLE users (
+        id TEXT PRIMARY KEY,
+        email TEXT NOT NULL,
+        name TEXT NOT NULL,
+        subscription_tier TEXT NOT NULL,
+        subscription_expiry TEXT NOT NULL,
+        profile_data TEXT,
+        last_sync TEXT,
+        created_at TEXT NOT NULL
+      )
+    ''');
+    
+    // Generated content table (offline access)
+    await db.execute('''
+      CREATE TABLE generated_content (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        prompt TEXT NOT NULL,
+        content TEXT NOT NULL,
+        platform TEXT NOT NULL,
+        language TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        is_synced INTEGER DEFAULT 0,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+      )
+    ''');
+    
+    // AI Influencers table
+    await db.execute('''
+      CREATE TABLE ai_influencers (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        persona_data TEXT NOT NULL,
+        avatar_path TEXT,
+        voice_config TEXT,
+        created_at TEXT NOT NULL,
+        is_synced INTEGER DEFAULT 0,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+      )
+    ''');
+    
+    // Offline templates
+    await db.execute('''
+      CREATE TABLE content_templates (
+        id TEXT PRIMARY KEY,
+        category TEXT NOT NULL,
+        template_data TEXT NOT NULL,
+        language TEXT NOT NULL,
+        is_premium INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL
+      )
+    ''');
+    
+    // Analytics cache
+    await db.execute('''
+      CREATE TABLE analytics_cache (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        event_type TEXT NOT NULL,
+        event_data TEXT NOT NULL,
+        timestamp TEXT NOT NULL,
+        is_synced INTEGER DEFAULT 0
+      )
+    ''');
+    
+    // Insert default templates
+    await _insertDefaultTemplates(db);
+  }
+  
+  static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    // Handle database upgrades
+    if (oldVersion < newVersion) {
+      // Migration logic here
+    }
+  }
+  
+  static Future<void> _insertDefaultTemplates(Database db) async {
+    final templates = [
+      {
+        'id': 'template_001',
+        'category': 'social_post',
+        'template_data': jsonEncode({
+          'title': 'Product Launch Post',
+          'template': 'Exciting news! 🚀 We\'re launching {product_name}! {description} #newproduct #launch',
+          'variables': ['product_name', 'description']
+        }),
+        'language': 'en',
+        'is_premium': 0,
+        'created_at': DateTime.now().toIso8601String(),
+      },
+      {
+        'id': 'template_002',
+        'category': 'social_post',
+        'template_data': jsonEncode({
+          'title': 'Behind the Scenes',
+          'template': 'Take a peek behind the scenes! 👀 {description} What do you think? #behindthescenes #process',
+          'variables': ['description']
+        }),
+        'language': 'en',
+        'is_premium': 0,
+        'created_at': DateTime.now().toIso8601String(),
+      },
+      // Add more templates for different languages and categories
+    ];
+    
+    for (var template in templates) {
+      await db.insert('content_templates', template);
+    }
+  }
+  
+  // User operations
+  static Future<void> saveUser(UserModel user) async {
+    final db = await database;
+    await db.insert(
+      'users',
+      {
+        'id': user.id,
+        'email': user.email,
+        'name': user.name,
+        'subscription_tier': user.subscriptionTier,
+        'subscription_expiry': user.subscriptionExpiry.toIso8601String(),
+        'profile_data': jsonEncode(user.toJson()),
+        'last_sync': DateTime.now().toIso8601String(),
+        'created_at': DateTime.now().toIso8601String(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+  
+  static Future<UserModel?> getUser(String userId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'users',
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
+    
+    if (maps.isNotEmpty) {
+      return UserModel.fromJson(jsonDecode(maps.first['profile_data']));
+    }
+    return null;
+  }
+  
+  // Content operations
+  static Future<void> saveGeneratedContent(ContentModel content) async {
+    final db = await database;
+    await db.insert(
+      'generated_content',
+      {
+        'id': content.id,
+        'user_id': content.userId,
+        'prompt': content.prompt,
+        'content': content.content,
+        'platform': content.platform,
+        'language': content.language,
+        'created_at': content.createdAt.toIso8601String(),
+        'is_synced': content.isSynced ? 1 : 0,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+  
+  static Future<List<ContentModel>> getGeneratedContent(String userId, {int limit = 50}) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'generated_content',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+      orderBy: 'created_at DESC',
+      limit: limit,
+    );
+    
+    return maps.map((map) => ContentModel.fromJson(map)).toList();
+  }
+  
+  // Template operations
+  static Future<List<Map<String, dynamic>>> getTemplates({
+    String? category,
+    String language = 'en',
+    bool includePremium = false,
+  }) async {
+    final db = await database;
+    String whereClause = 'language = ?';
+    List<dynamic> whereArgs = [language];
+    
+    if (category != null) {
+      whereClause += ' AND category = ?';
+      whereArgs.add(category);
+    }
+    
+    if (!includePremium) {
+      whereClause += ' AND is_premium = 0';
+    }
+    
+    final List<Map<String, dynamic>> maps = await db.query(
+      'content_templates',
+      where: whereClause,
+      whereArgs: whereArgs,
+      orderBy: 'created_at DESC',
+    );
+    
+    return maps;
+  }
+  
+  // Analytics caching
+  static Future<void> cacheAnalyticsEvent(String userId, String eventType, Map<String, dynamic> eventData) async {
+    final db = await database;
+    await db.insert('analytics_cache', {
+      'id': DateTime.now().millisecondsSinceEpoch.toString(),
+      'user_id': userId,
+      'event_type': eventType,
+      'event_data': jsonEncode(eventData),
+      'timestamp': DateTime.now().toIso8601String(),
+      'is_synced': 0,
+    });
+  }
+  
+  static Future<List<Map<String, dynamic>>> getUnsyncedAnalytics() async {
+    final db = await database;
+    return await db.query(
+      'analytics_cache',
+      where: 'is_synced = 0',
+      orderBy: 'timestamp ASC',
+    );
+  }
+  
+  static Future<void> markAnalyticsSynced(List<String> ids) async {
+    final db = await database;
+    final batch = db.batch();
+    for (String id in ids) {
+      batch.update(
+        'analytics_cache',
+        {'is_synced': 1},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    }
+    await batch.commit();
+  }
+  
+  // Cleanup operations
+  static Future<void> cleanup() async {
+    final db = await database;
+    final oneWeekAgo = DateTime.now().subtract(const Duration(days: 7));
+    
+    // Clean old synced analytics
+    await db.delete(
+      'analytics_cache',
+      where: 'is_synced = 1 AND timestamp < ?',
+      whereArgs: [oneWeekAgo.toIso8601String()],
+    );
+  }
+  
+  static Future<void> clearUserData(String userId) async {
+    final db = await database;
+    final batch = db.batch();
+    
+    batch.delete('generated_content', where: 'user_id = ?', whereArgs: [userId]);
+    batch.delete('ai_influencers', where: 'user_id = ?', whereArgs: [userId]);
+    batch.delete('analytics_cache', where: 'user_id = ?', whereArgs: [userId]);
+    batch.delete('users', where: 'id = ?', whereArgs: [userId]);
+    
+    await batch.commit();
+  }
+}
+```
+
+## 4. Localization Manager (lib/utils/localization_manager.dart)
+```dart
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class LocalizationManager extends ChangeNotifier {
+  static const List<String> supportedLanguages = [
+    'en', 'es', 'fr', 'de', 'zh', 'ja', 'ko', 'ar', 'ru', 'pt', 'it', 'nl', 'tr', 'hi', 'bn'
+  ];
+  
+  static const Map<String, String> languageNames = {
+    'en': 'English',
+    'es': 'Español',
+    'fr': 'Français',
+    'de': 'Deutsch',
+    'zh': '中文',
+    'ja': '日本語',
+    'ko': '한국어',
+    'ar': 'العربية',
+    'ru': 'Русский',
+    'pt': 'Português',
+    'it': 'Italiano',
+    'nl': 'Nederlands',
+    'tr': 'Türkçe',
+    'hi': 'हिन्दी',
+    'bn': 'বাংলা',
+  };
+  
+  Locale _currentLocale = const Locale('en');
+  Map<String, String> _localizedStrings = {};
+  SharedPreferences? _prefs;
+  
+  Locale get currentLocale => _currentLocale;
+  String get currentLanguageCode => _currentLocale.languageCode;
+  String get currentLanguageName => languageNames[currentLanguageCode] ?? 'English';
+  
+  static LocalizationManager? _instance;
+  static LocalizationManager get instance {
+    _instance ??= LocalizationManager._internal();
+    return _instance!;
+  }
+  
+  LocalizationManager._internal();
+  
+  Future<void> initialize() async {
+    _prefs = await SharedPreferences.getInstance();
+    final savedLanguage = _prefs?.getString('selected_language') ?? 'en';
+    await setLanguage(savedLanguage);
+  }
+  
+  Future<void> setLanguage(String languageCode) async {
+    if (!supportedLanguages.contains(languageCode)) {
+      languageCode = 'en';
+    }
+    
+    _currentLocale = Locale(languageCode);
+    await _loadLocalizedStrings(languageCode);
+    await _prefs?.setString('selected_language', languageCode);
+    notifyListeners();
+  }
+  
+  Future<void> _loadLocalizedStrings(String languageCode) async {
+    try {
+      final String jsonString = await rootBundle.loadString('assets/locales/$languageCode.json');
+      final Map<String, dynamic> jsonMap = json.decode(jsonString);
+      _localizedStrings = jsonMap.map((key, value) => MapEntry(key, value.toString()));
+    } catch (e) {
+      // Fallback to English if language file not found
+      if (languageCode != 'en') {
+        await _loadLocalizedStrings('en');
+      }
+    }
+  }
+  
+  String translate(String key, {Map<String, String>? params}) {
+    String translation = _localizedStrings[key] ?? key;
+    
+    // Replace parameters
+    if (params != null) {
+      params.forEach((paramKey, value) {
+        translation = translation.replaceAll('{$paramKey}', value);
+      });
+    }
+    
+    return translation;
+  }
+  
+  String get(String key) => translate(key);
+  
+  // Common translations with context
+  String greeting(String name) => translate('greeting', params: {'name': name});
+  String itemCount(int count) => translate('item_count', params: {'count': count.toString()});
+  String timeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+    
+    if (difference.inMinutes < 1) {
+      return translate('time_just_now');
+    } else if (difference.inMinutes < 60) {
+      return translate('time_minutes_ago', params: {'minutes': difference.inMinutes.toString()});
+    } else if (difference.inHours < 24) {
+      return translate('time_hours_ago', params: {'hours': difference.inHours.toString()});
+    } else if (difference.inDays < 7) {
+      return translate('time_days_ago', params: {'days': difference.inDays.toString()});
+    } else {
+      return translate('time_weeks_ago', params: {'weeks': (difference.inDays / 7).floor().toString()});
+    }
+  }
+  
+  // RTL language support
+  bool get isRTL => ['ar'].contains(currentLanguageCode);
+  TextDirection get textDirection => isRTL ? TextDirection.rtl : TextDirection.ltr;
+  
+  // Currency formatting based on locale
+  String formatCurrency(double amount) {
+    switch (currentLanguageCode) {
+      case 'en':
+        return '\$${amount.toStringAsFixed(2)}';
+      case 'es':
+        return '€${amount.toStringAsFixed(2)}';
+      case 'de':
+        return '€${amount.toStringAsFixed(2)}';
+      case 'fr':
+        return '€${amount.toStringAsFixed(2)}';
+      case 'ja':
+        return '¥${amount.toInt()}';
+      case 'zh':
+        return '¥${amount.toStringAsFixed(2)}';
+      case 'ko':
+        return '₩${amount.toInt()}';
+      case 'ru':
+        return '₽${amount.toStringAsFixed(2)}';
+      case 'hi':
+        return '₹${amount.toStringAsFixed(2)}';
+      default:
+        return '\$${amount.toStringAsFixed(2)}';
+    }
+  }
+  
+  // Date formatting based on locale
+  String formatDate(DateTime date) {
+    switch (currentLanguageCode) {
+      case 'en':
+        return '${date.month}/${date.day}/${date.year}';
+      case 'de':
+      case 'fr':
+        return '${date.day}.${date.month}.${date.year}';
+      case 'ja':
+      case 'zh':
+      case 'ko':
+        return '${date.year}/${date.month}/${date.day}';
+      default:
+        return '${date.day}/${date.month}/${date.year}';
+    }
+  }
+}
+
+// Extension for easy access
+extension LocalizationExtension on String {
+  String get tr => LocalizationManager.instance.translate(this);
+  String trParams(Map<String, String> params) => LocalizationManager.instance.translate(this, params: params);
+}
+```
+
+## 5. Theme Manager (lib/utils/theme_manager.dart)
+```dart
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class ThemeManager extends ChangeNotifier {
+  static const String _themeKey = 'app_theme_mode';
+  static const String _accentColorKey = 'accent_color';
+  
+  ThemeMode _themeMode = ThemeMode.system;
+  Color _accentColor = const Color(0xFF6C5CE7);
+  SharedPreferences? _prefs;
+  
+  ThemeMode get themeMode => _themeMode;
+  Color get accentColor => _accentColor;
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
+  
+  static ThemeManager? _instance;
+  static ThemeManager get instance {
+    _instance ??= ThemeManager._internal();
+    return _instance!;
+  }
+  
+  ThemeManager._internal();
+  
+  Future<void> initialize() async {
+    _prefs = await SharedPreferences.getInstance();
+    _loadThemePreferences();
+  }
+  
+  void _loadThemePreferences() {
+    final themeIndex = _prefs?.getInt(_themeKey) ?? 0;
+    _themeMode = ThemeMode.values[themeIndex];
+    
+    final colorValue = _prefs?.getInt(_accentColorKey) ?? 0xFF6C5CE7;
+    _accentColor = Color(colorValue);
+    
+    notifyListeners();
+  }
+  
+  Future<void> setThemeMode(ThemeMode mode) async {
+    _themeMode = mode;
+    await _prefs?.setInt(_themeKey, mode.index);
+    notifyListeners();
+  }
+  
+  Future<void> setAccentColor(Color color) async {
+    _accentColor = color;
+    await _prefs?.setInt(_accentColorKey, color.value);
+    notifyListeners();
+  }
+  
+  Future<void> toggleTheme() async {
+    final newMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    await setThemeMode(newMode);
+  }
+  
+  // Predefined color options
+  static const List<Color> accentColorOptions = [
+    Color(0xFF6C5CE7), // Brand Purple
+    Color(0xFF00CEC9), // Electric Blue
+    Color(0xFFE17055), // Coral
+    Color(0xFFFDCB6E), // Sunset Orange
+    Color(0xFF00B894), // Mint Green
+    Color(0xFFE84393), // Pink
+    Color(0xFFA29BFE), // Light Purple
+    Color(0xFF74B9FF), // Sky Blue
+  ];
+  
+  // Light theme
+  ThemeData get lightTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: _accentColor,
+        brightness: Brightness.light,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: const TextStyle(
+          color: Colors.black87,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      cardTheme: CardTheme(
+        color: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        shadowColor: _accentColor.withOpacity(0.1),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _accentColor,
+          foregroundColor: Colors.white,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: _accentColor,
+        foregroundColor: Colors.white,
+        elevation: 4,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.grey[50],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: _accentColor, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: Colors.white,
+        # ONXLink iOS Podfile
+platform :ios, '13.0'
+use_frameworks!
+use_modular_headers!
+
+# Security Flags
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+
+def onx_pods
+  # Core Dependencies
+  pod 'Firebase/Core', '~> 10.0'
+  pod 'Firebase/Auth', '~> 10.0'
+  pod 'Firebase/Analytics', '~> 10.0'
+  pod 'Firebase/Firestore', '~> 10.0'
+  
+  # Security & Encryption
+  pod 'Themis', '~> 0.15.0' # End-to-end encryption
+  pod 'KeychainSwift', '~> 20.0'
+  pod 'CryptoSwift', '~> 1.7'
+  
+  # Biometric Authentication
+  pod 'LocalAuthentication', '~> 3.0'
+  
+  # Networking & Offline Support
+  pod 'Alamofire', '~> 5.6'
+  pod 'RealmSwift', '~> 10.39'
+  pod 'GRDB.swift', '~> 6.15'
+  
+  # AI & ML Components
+  pod 'TensorFlowLiteSwift', '~> 2.12'
+  pod 'CoreMLPredictionsPlugin', '~> 1.0'
+  
+  # UI & Performance
+  pod 'SDWebImage', '~> 5.15'
+  pod 'lottie-ios', '~> 4.2'
+  pod 'SwiftUIX', '~> 0.1'
+  
+  # Payments
+  pod 'RevenueCat', '~> 4.27'
+  pod 'Paddle', '~> 4.4'
+  
+  # Internationalization
+  pod 'SwiftGoogleTranslate', '~> 2.0'
+  
+  # Debugging (Development Only)
+  if ENV['DEBUG'] == '1'
+    pod 'Flipper', '~> 0.125'
+    pod 'Flipper-Folly', '~> 2.6'
+    pod 'Flipper-RSocket', '~> 1.4'
+  end
+end
+
+target 'ONXLink' do
+  onx_pods
+  
+  # Enable Swift concurrency
+  post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['SWIFT_VERSION'] = '5.7'
+        config.build_settings['ENABLE_BITCODE'] = 'NO'
+        config.build_settings['STRIP_BITCODE_FROM_COPIED_FILES'] = 'NO'
+        config.build_settings['OTHER_SWIFT_FLAGS'] = '-Xfrontend -enable-experimental-concurrency'
+        
+        # Security hardening
+        config.build_settings['GCC_ENABLE_HARDENING'] = 'YES'
+        config.build_settings['GCC_ENABLE_FORTIFY_SOURCE'] = 'YES'
+        config.build_settings['DEAD_CODE_STRIPPING'] = 'YES'
+        config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'YES'
+        config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
+      end
+    end
+  end
+end
+
+# GDPR Compliance Configuration
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == 'FirebaseAnalytics'
+      target.build_configurations.each do |config|
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED=1'
+      end
+    end
+  end
+end

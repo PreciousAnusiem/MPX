@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.onxlink.app">
+
+    <!-- Network Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    
+    <!-- Storage Permissions for offline content -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    
+    <!-- Camera & Media for content creation -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    
+    <!-- Biometric Authentication -->
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    
+    <!-- Background processing for content sync -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    
+    <!-- Notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    
+    <!-- Hardware features -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.fingerprint" android:required="false" />
+    <uses-feature android:name="android.hardware.biometrics" android:required="false" />
+    
+    <!-- File provider for sharing content -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <application
+        android:name=".ONXLinkApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:theme="@style/LaunchTheme"
+        android:exported="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="false"
+        android:preserveLegacyExternalStorage="false"
+        android:largeHeap="true"
+        android:hardwareAccelerated="true"
+        android:usesCleartextTraffic="false"
+        tools:targetApi="31">
+        
+        <!-- Main Activity with proper task affinity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:excludeFromRecents="false"
+            android:theme="@style/LaunchTheme"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:resizeableActivity="false"
+            android:supportsPictureInPicture="false">
+            
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            
+            <!-- Deep linking for social auth callbacks -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="onxlink" 
+                      android:host="auth" />
+            </intent-filter>
+            
+            <!-- Universal links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                      android:host="app.onxlink.com" />
+            </intent-filter>
+            
+            <!-- Share intent for content -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+            
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+        </activity>
+
+        <!-- Background sync service for offline-first features -->
+        <service
+            android:name=".services.ContentSyncService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+            
+        <!-- AI processing service -->
+        <service
+            android:name=".services.AIProcessingService"
+            android:enabled="true"
+            android:exported="false"
+            android:isolatedProcess="true" />
+            
+        <!-- Upload service for content posting -->
+        <service
+            android:name=".services.ContentUploadService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- Boot receiver for scheduled content -->
+        <receiver
+            android:name=".receivers.BootCompleteReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        
+        <!-- Network state receiver for offline mode -->
+        <receiver
+            android:name=".receivers.NetworkStateReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Alarm receiver for scheduled posts -->
+        <receiver
+            android:name=".receivers.ScheduledPostReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- File provider for sharing and camera -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Content provider for secure data sharing -->
+        <provider
+            android:name=".providers.SecureContentProvider"
+            android:authorities="${applicationId}.secure"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.ACCESS_NETWORK_STATE" />
+
+        <!-- Work Manager initialization -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+        <!-- Firebase messaging service -->
+        <service
+            android:name=".services.ONXFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- Notification channels and handlers -->
+        <receiver
+            android:name=".receivers.NotificationActionReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- Security: Prevent app from showing in recent apps when locked -->
+        <activity
+            android:name=".activities.SecurityLockActivity"
+            android:exported="false"
+            android:theme="@style/SecurityTheme"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:launchMode="singleInstance" />
+
+        <!-- Biometric authentication activity -->
+        <activity
+            android:name=".activities.BiometricAuthActivity"
+            android:exported="false"
+            android:theme="@style/TransparentTheme"
+            android:excludeFromRecents="true"
+            android:noHistory="true" />
+
+        <!-- Content creation activity -->
+        <activity
+            android:name=".activities.ContentCreationActivity"
+            android:exported="false"
+            android:theme="@style/FullscreenTheme"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Subscription management activity -->
+        <activity
+            android:name=".activities.SubscriptionActivity"
+            android:exported="false"
+            android:theme="@style/NormalTheme"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Settings activity -->
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:exported="false"
+            android:theme="@style/NormalTheme"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Metadata for various services -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
+            
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+            
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_color" />
+            
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+
+        <!-- RevenueCat API key -->
+        <meta-data
+            android:name="com.revenuecat.public_api_key"
+            android:value="@string/revenuecat_api_key" />
+
+        <!-- Facebook SDK -->
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+            
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+
+        <!-- Instagram Basic Display API -->
+        <meta-data
+            android:name="com.instagram.app_id"
+            android:value="@string/instagram_app_id" />
+
+        <!-- TikTok API -->
+        <meta-data
+            android:name="com.tiktok.client_key"
+            android:value="@string/tiktok_client_key" />
+
+        <!-- Twitter API -->
+        <meta-data
+            android:name="com.twitter.api_key"
+            android:value="@string/twitter_api_key" />
+
+        <!-- Content security and encryption -->
+        <meta-data
+            android:name="com.onxlink.encryption.enabled"
+            android:value="true" />
+            
+        <meta-data
+            android:name="com.onxlink.biometric.required"
+            android:value="false" />
+            
+        <meta-data
+            android:name="com.onxlink.offline.mode"
+            android:value="true" />
+
+        <!-- App shortcuts for quick actions -->
+        <meta-data
+            android:name="android.app.shortcuts"
+            android:resource="@xml/shortcuts" />
+
+        <!-- Auto backup exclusions for security -->
+        <meta-data
+            android:name="android.app.backup_agent"
+            android:value=".backup.ONXBackupAgent" />
+
+        <!-- ML Kit dependencies -->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="text_recognition,image_labeling,face_detection" />
+
+        <!-- Preloaded fonts -->
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+    </application>
+
+    <!-- Queries for intent resolution (Android 11+) -->
+    <queries>
+        <!-- Social media apps for direct sharing -->
+        <package android:name="com.instagram.android" />
+        <package android:name="com.zhiliaoapp.musically" /> <!-- TikTok -->
+        <package android:name="com.twitter.android" />
+        <package android:name="com.facebook.katana" />
+        <package android:name="com.linkedin.android" />
+        <package android:name="com.pinterest" />
+        <package android:name="com.snapchat.android" />
+        <package android:name="com.google.android.youtube" />
+        
+        <!-- Payment apps -->
+        <package android:name="com.paypal.android.p2pmobile" />
+        <package android:name="com.google.android.apps.walletnfcrel" />
+        
+        <!-- File managers -->
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+            <data android:mimeType="*/*" />
+        </intent>
+        
+        <!-- Camera apps -->
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        
+        <!-- Browser for OAuth -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        
+        <!-- Sharing -->
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+
+</manifest>

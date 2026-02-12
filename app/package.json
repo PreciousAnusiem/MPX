@@ -1,0 +1,390 @@
+{
+  "name": "onxlink",
+  "displayName": "ONXLink",
+  "version": "1.0.0",
+  "description": "AI Social Commerce Platform - Cross-platform social media management with AI influencers and predictive inventory",
+  "main": "index.js",
+  "private": true,
+  "homepage": "https://onxlink.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onxlink/mobile-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/onxlink/mobile-app/issues"
+  },
+  "author": {
+    "name": "ONXLink Team",
+    "email": "support@onxlink.com",
+    "url": "https://onxlink.com"
+  },
+  "license": "Proprietary",
+  "keywords": [
+    "social media",
+    "ai influencer",
+    "cross-platform",
+    "e-commerce",
+    "react-native",
+    "social commerce"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest --detectOpenHandles --forceExit",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "detox test",
+    "test:e2e:build": "detox build -c ios.sim.debug",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "type-check": "tsc --noEmit",
+    "clean": "npx react-native clean",
+    "reset-cache": "npx react-native start --reset-cache",
+    "build:android": "cd android && ./gradlew assembleRelease",
+    "build:ios": "react-native run-ios --configuration Release",
+    "bundle:android": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle",
+    "bundle:ios": "npx react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/main.jsbundle",
+    "postinstall": "npx patch-package && cd ios && pod install",
+    "flipper": "npx react-native run-ios --simulator=\"iPhone 14 Pro\"",
+    "adb": "adb reverse tcp:8081 tcp:8081",
+    "prepare": "husky install",
+    "prebuild": "npm run lint && npm run type-check && npm run test",
+    "analyze": "npx @react-native-community/cli doctor",
+    "security-check": "npm audit --audit-level moderate",
+    "deps-check": "npx ncu -i",
+    "generate:icons": "npx @bam.tech/react-native-make generate-icons",
+    "generate:splash": "npx @bam.tech/react-native-make generate-splashscreen",
+    "codegen": "npx react-native codegen",
+    "metro": "npx react-native start --experimental-debugger"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-native": "0.73.4",
+    
+    "// NAVIGATION & ROUTING": "",
+    "@react-navigation/native": "^6.1.9",
+    "@react-navigation/stack": "^6.3.20",
+    "@react-navigation/bottom-tabs": "^6.5.11",
+    "@react-navigation/drawer": "^6.6.6",
+    "@react-navigation/material-top-tabs": "^6.6.5",
+    "react-native-screens": "^3.29.0",
+    "react-native-safe-area-context": "^4.8.2",
+    "react-native-gesture-handler": "^2.14.1",
+    "react-native-reanimated": "^3.6.2",
+    
+    "// STATE MANAGEMENT": "",
+    "@reduxjs/toolkit": "^2.0.1",
+    "react-redux": "^9.0.4",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^3.1.0",
+    "@react-native-async-storage/async-storage": "^1.21.0",
+    
+    "// AUTHENTICATION & SECURITY": "",
+    "@react-native-firebase/app": "^19.0.1",
+    "@react-native-firebase/auth": "^19.0.1",
+    "@react-native-firebase/firestore": "^19.0.1",
+    "@react-native-firebase/analytics": "^19.0.1",
+    "@react-native-firebase/messaging": "^19.0.1",
+    "@react-native-firebase/crashlytics": "^19.0.1",
+    "react-native-keychain": "^8.1.3",
+    "react-native-biometrics": "^3.0.1",
+    "react-native-touch-id": "^4.4.1",
+    "react-native-fingerprint-scanner": "^6.0.0",
+    "react-native-device-info": "^10.11.0",
+    "react-native-app-auth": "^7.2.0",
+    "crypto-js": "^4.2.0",
+    "bcryptjs": "^2.4.3",
+    "uuid": "^9.0.1",
+    
+    "// PAYMENTS & SUBSCRIPTIONS": "",
+    "react-native-iap": "^12.10.7",
+    "react-native-purchases": "^7.3.2",
+    "stripe-react-native": "^0.37.2",
+    "@stripe/stripe-react-native": "^0.37.2",
+    
+    "// NETWORKING & API": "",
+    "axios": "^1.6.5",
+    "react-query": "^3.39.3",
+    "@tanstack/react-query": "^5.17.19",
+    "react-native-network-info": "^5.2.1",
+    "react-native-netinfo": "^11.2.1",
+    "@react-native-community/netinfo": "^11.2.1",
+    "socket.io-client": "^4.7.4",
+    
+    "// UI & STYLING": "",
+    "react-native-vector-icons": "^10.0.3",
+    "react-native-svg": "^14.1.0",
+    "react-native-linear-gradient": "^2.8.3",
+    "react-native-paper": "^5.12.3",
+    "react-native-elements": "^3.4.3",
+    "react-native-ui-lib": "^7.14.3",
+    "lottie-react-native": "^6.4.1",
+    "react-native-animatable": "^1.4.0",
+    "react-native-super-grid": "^6.0.1",
+    "react-native-draggable-flatlist": "^4.0.1",
+    "react-native-modal": "^13.0.1",
+    "react-native-picker-select": "^9.1.3",
+    "react-native-swipe-gestures": "^1.0.5",
+    "react-native-swiper": "^1.6.0",
+    "react-native-snap-carousel": "^3.9.1",
+    "react-native-pulse": "^1.0.7",
+    
+    "// MEDIA & IMAGE HANDLING": "",
+    "react-native-fast-image": "^8.6.3",
+    "react-native-image-picker": "^7.1.0",
+    "react-native-image-crop-picker": "^0.40.3",
+    "react-native-image-resizer": "^3.0.4",
+    "react-native-image-zoom-viewer": "^3.0.1",
+    "react-native-photo-editor": "^1.1.0",
+    "react-native-vision-camera": "^3.7.0",
+    "react-native-video": "^6.0.0-rc.0",
+    "react-native-video-controls": "^2.8.1",
+    "react-native-media-controls": "^2.3.0",
+    
+    "// OFFLINE & STORAGE": "",
+    "react-native-sqlite-storage": "^6.0.1",
+    "@react-native-sqlite/sqlite": "^3.3.11",
+    "react-native-mmkv": "^2.11.0",
+    "react-native-fs": "^2.20.0",
+    "react-native-background-job": "^1.2.4",
+    "react-native-background-sync": "^1.0.7",
+    "react-native-offline": "^6.0.2",
+    
+    "// INTERNATIONALIZATION": "",
+    "react-i18next": "^14.0.0",
+    "i18next": "^23.7.16",
+    "react-native-localize": "^3.0.6",
+    "moment": "^2.30.1",
+    "date-fns": "^3.2.0",
+    
+    "// NOTIFICATIONS & COMMUNICATION": "",
+    "@react-native-firebase/messaging": "^19.0.1",
+    "react-native-push-notification": "^8.1.1",
+    "@react-native-community/push-notification-ios": "^1.11.0",
+    "react-native-local-push-notification": "^1.1.0",
+    "react-native-flash-message": "^0.4.2",
+    
+    "// SOCIAL MEDIA INTEGRATION": "",
+    "react-native-share": "^10.0.2",
+    "react-native-fbsdk-next": "^12.1.2",
+    "react-native-google-signin": "^11.0.1",
+    "react-native-app-link": "^1.0.2",
+    "react-native-deep-linking": "^2.2.0",
+    
+    "// ANALYTICS & MONITORING": "",
+    "@react-native-firebase/analytics": "^19.0.1",
+    "@react-native-firebase/crashlytics": "^19.0.1",
+    "react-native-exception-handler": "^2.10.10",
+    "@sentry/react-native": "^5.15.2",
+    "react-native-code-push": "^8.2.1",
+    "flipper-plugin-react-native-performance": "^0.3.0",
+    
+    "// AI & MACHINE LEARNING": "",
+    "react-native-tensorflow": "^0.3.2",
+    "react-native-ml-kit": "^5.3.0",
+    "react-native-text-detector": "^0.1.7",
+    "react-native-face-detector": "^1.0.1",
+    
+    "// UTILITIES": "",
+    "lodash": "^4.17.21",
+    "ramda": "^0.29.1",
+    "validator": "^13.11.0",
+    "react-native-url-polyfill": "^2.0.0",
+    "react-native-get-random-values": "^1.9.0",
+    "react-native-webview": "^13.6.4",
+    "react-native-qrcode-scanner": "^1.5.5",
+    "react-native-barcode-builder": "^2.0.1",
+    "react-native-calendar-picker": "^7.1.3",
+    "react-native-date-picker": "^4.3.3",
+    "react-native-progress": "^5.0.1",
+    "react-native-skeleton-placeholder": "^5.2.4",
+    "react-native-shimmer": "^0.6.0",
+    "react-native-permissions": "^4.1.1",
+    "react-native-contacts": "^7.0.8",
+    "react-native-location": "^2.5.0",
+    
+    "// DEVELOPMENT TOOLS": "",
+    "react-native-debugger-open": "^0.3.28",
+    "reactotron-react-native": "^5.0.4",
+    "reactotron-redux": "^3.1.9",
+    "reactotron-redux-saga": "^4.2.3"
+  },
+  "devDependencies": {
+    "// TESTING": "",
+    "@testing-library/react-native": "^12.4.3",
+    "@testing-library/jest-native": "^5.4.3",
+    "jest": "^29.7.0",
+    "detox": "^20.13.5",
+    "@types/detox": "^18.1.4",
+    "react-test-renderer": "18.2.0",
+    
+    "// TYPESCRIPT": "",
+    "@types/react": "^18.2.46",
+    "@types/react-native": "^0.72.8",
+    "@types/jest": "^29.5.11",
+    "@types/lodash": "^4.14.202",
+    "@types/uuid": "^9.0.7",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/crypto-js": "^4.2.2",
+    "typescript": "^5.3.3",
+    
+    "// LINTING & FORMATTING": "",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-native": "^4.1.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.1.1",
+    
+    "// BUILD TOOLS": "",
+    "@react-native/babel-preset": "^0.73.19",
+    "@react-native/metro-config": "^0.73.3",
+    "@react-native/typescript-config": "^0.73.1",
+    "metro-react-native-babel-preset": "^0.77.0",
+    "babel-jest": "^29.7.0",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "react-native-svg-transformer": "^1.1.0",
+    
+    "// UTILITIES": "",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "@commitlint/cli": "^18.4.4",
+    "@commitlint/config-conventional": "^18.4.4",
+    "npm-check-updates": "^16.14.12",
+    
+    "// AUTOMATION": "",
+    "@bam.tech/react-native-make": "^3.2.1",
+    "react-native-rename": "^3.2.13",
+    "react-native-bundle-splitter": "^3.1.0"
+  },
+  "resolutions": {
+    "react": "18.2.0",
+    "react-native": "0.73.4",
+    "@types/react": "^18.2.46",
+    "metro": "^0.80.3"
+  },
+  "overrides": {
+    "react": "18.2.0",
+    "react-native": "0.73.4"
+  },
+  "jest": {
+    "preset": "react-native",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "transform": {
+      "^.+\\.(js|jsx)$": "babel-jest",
+      "^.+\\.(ts|tsx)$": [
+        "ts-jest",
+        {
+          "tsconfig": "tsconfig.json"
+        }
+      ]
+    },
+    "testMatch": [
+      "**/__tests__/**/*.(ts|tsx|js)",
+      "**/*.(test|spec).(ts|tsx|js)"
+    ],
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-native/extend-expect"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/**/*.d.ts",
+      "!src/**/__tests__/**",
+      "!src/**/*.stories.{ts,tsx}"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 70,
+        "lines": 70,
+        "statements": 70
+      }
+    },
+    "moduleNameMapping": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^@components/(.*)$": "<rootDir>/src/components/$1",
+      "^@screens/(.*)$": "<rootDir>/src/screens/$1",
+      "^@services/(.*)$": "<rootDir>/src/services/$1",
+      "^@utils/(.*)$": "<rootDir>/src/utils/$1",
+      "^@assets/(.*)$": "<rootDir>/src/assets/$1"
+    }
+  },
+  "detox": {
+    "test-runner": "jest",
+    "runner-config": "e2e/config.json",
+    "configurations": {
+      "ios.sim.debug": {
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/ONXLink.app",
+        "build": "xcodebuild -workspace ios/ONXLink.xcworkspace -scheme ONXLink -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+        "type": "ios.simulator",
+        "device": {
+          "type": "iPhone 14 Pro"
+        }
+      },
+      "android.emu.debug": {
+        "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
+        "build": "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug",
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Pixel_4_API_30"
+        }
+      }
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && npm run type-check",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-push": "npm run test && npm run security-check"
+    }
+  },
+  "react-native": {
+    "react-native-vector-icons/AntDesign": "react-native-vector-icons/dist/AntDesign",
+    "react-native-vector-icons/Entypo": "react-native-vector-icons/dist/Entypo",
+    "react-native-vector-icons/EvilIcons": "react-native-vector-icons/dist/EvilIcons",
+    "react-native-vector-icons/Feather": "react-native-vector-icons/dist/Feather",
+    "react-native-vector-icons/FontAwesome": "react-native-vector-icons/dist/FontAwesome",
+    "react-native-vector-icons/Foundation": "react-native-vector-icons/dist/Foundation",
+    "react-native-vector-icons/Ionicons": "react-native-vector-icons/dist/Ionicons",
+    "react-native-vector-icons/MaterialIcons": "react-native-vector-icons/dist/MaterialIcons",
+    "react-native-vector-icons/MaterialCommunityIcons": "react-native-vector-icons/dist/MaterialCommunityIcons",
+    "react-native-vector-icons/Octicons": "react-native-vector-icons/dist/Octicons",
+    "react-native-vector-icons/Zocial": "react-native-vector-icons/dist/Zocial",
+    "react-native-vector-icons/SimpleLineIcons": "react-native-vector-icons/dist/SimpleLineIcons"
+  },
+  "rnpm": {
+    "assets": [
+      "./src/assets/fonts/"
+    ]
+  },
+  "codegenConfig": {
+    "name": "ONXLinkSpec",
+    "type": "modules",
+    "jsSrcsDir": "src"
+  }
+}
